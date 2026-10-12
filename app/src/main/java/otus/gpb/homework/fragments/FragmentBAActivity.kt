@@ -9,15 +9,19 @@ class FragmentBAActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment_b_host)
-        if (savedInstanceState != null) return
-
         val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        if (isLandscape && supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStackImmediate()
+        }
+        val primary = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        val secondary = supportFragmentManager.findFragmentById(R.id.fragmentBBContainer)
         supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            if (primary == null) add(R.id.fragmentContainer, FragmentBA())
             if (isLandscape) {
-                add(R.id.fragmentBAContainer, FragmentBA())
-                add(R.id.fragmentBBContainer, FragmentBB())
-            } else {
-                add(R.id.fragmentContainer, FragmentBA())
+                if (secondary == null) add(R.id.fragmentBBContainer, FragmentBB())
+            } else if (secondary != null) {
+                remove(secondary)
             }
         }
     }

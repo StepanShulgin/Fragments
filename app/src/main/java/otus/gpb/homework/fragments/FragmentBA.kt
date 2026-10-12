@@ -11,12 +11,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 
 class FragmentBA : Fragment() {
+    private var backgroundColor = Color.WHITE
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        backgroundColor = savedInstanceState?.getInt(RESULT_COLOR) ?: Color.WHITE
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(RESULT_COLOR, backgroundColor)
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.fragment_ba, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        view.setBackgroundColor(backgroundColor)
         parentFragmentManager.setFragmentResultListener(RESULT_KEY, viewLifecycleOwner) { _, result ->
-            view.setBackgroundColor(result.getInt(RESULT_COLOR))
+            backgroundColor = result.getInt(RESULT_COLOR)
+            view.setBackgroundColor(backgroundColor)
         }
 
         val openButton = view.findViewById<Button>(R.id.openBB)
